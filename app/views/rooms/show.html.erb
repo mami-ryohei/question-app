@@ -226,9 +226,7 @@
 
     const peer = new Peer({
       key: gon.api_key,
-      config: {
-        iceTransportPolicy: 'relay',
-      },
+      debug: 3
     });
     peer.on('open', () => {
       document.getElementById('my-id').textContent = peer.id;
