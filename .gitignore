@@ -31,3 +31,5 @@
 /config/master.key
 
 /.env
+
+/app/views/rooms/show.html.erb
