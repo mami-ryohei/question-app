@@ -1,0 +1,280 @@
+<section class="hero">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title">
+        DM（個人トーク）
+      </h1>
+    </div>
+  </div>
+</section>
+
+<div class="media is-ancestor">
+  <div class="tile">
+    <% @entries.each do |e| %>
+      <div class="tile is-parent">
+        <article class="tile is-child box">
+          <p class="title", style="text-align: center;"><a href="/users/<%=e.user.id %>"><%= e.user.username%>さん</a></p>
+          <figure class="image is-4by3">
+            <%= link_to user_path(e.user.id) do %>
+              <%= attachment_image_tag e.user, :profile_image, fallback: "no_image.png", class: "profile_image"%>
+            <% end %>
+          </figure>
+        </article>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<hr>
+<% @messages.each do |m| %>
+  <article class="media">
+    <% if m.present? %>
+      <figure class="media-left">
+        <p class="image is-64x64">
+          <%= link_to user_path(m.user.id) do %>
+            <%= attachment_image_tag m.user, :profile_image, fallback: "no_image.png" %>
+          <% end %>
+        </p>
+      </figure>
+      <div class="media-content">
+        <div class="content">
+          <p>
+            <strong><a href="/users/<%= m.user_id %>"><%= m.user.username %></a></strong>
+            <br>
+            <%= m.content %>
+            <br>
+            <% if m.message_image.present? %>
+              <div class="column is-4">
+                <div class="card">
+                  <div class="card-image">
+                    <figure class="image is-4by3">
+                      <%= link_to Refile.attachment_url(m, :message_image), "data-lightbox"=>"abc" do %>
+                        <%= attachment_image_tag m, :message_image %>
+                      <% end %>
+                    </figure>
+                  </div>
+                </div>
+              </div>
+            <% else %>
+            <% end %>
+          </p>
+        </div>
+      </div>
+    <% else %>
+      <h3 class="text-center">メッセージはまだありません</h3>
+    <% end %>
+  </article>
+<% end %>
+
+<article class="media">
+  <figure class="media-left">
+    <p class="image is-64x64">
+      <%= attachment_image_tag current_user, :profile_image, fallback: "no_image.png"%>
+    </p>
+  </figure>
+  <div class="media-content">
+    <%= form_for @message do |f| %>
+      <div class="field">
+        <p class="control">
+          <%= f.text_area :content, :placeholder => "メッセージを入力して下さい", class: "textarea" %>
+        </p>
+      </div>
+      <div class="field">
+        <div class="file is-info has-name">
+          <label class="file-label">
+            <%= f.attachment_field :message_image, class: "input" %>
+          </label>
+        </div>
+      </div>
+      <%= f.hidden_field :room_id, :value => @room.id %>
+      <nav class="level">
+        <div class="level-left">
+          <div class="level-item". style="margin-bottom: 50px;">
+            <%= f.submit "送信する", class:"button is-link" %>
+          </div>
+        </div>
+      </nav>
+    <% end %>
+  </div>
+</article>
+
+<div class="column has-background-light">
+  <section class="hero", style="text-align: center;">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">
+          ビデオ通話
+        </h1>
+      </div>
+    </div>
+  </section>
+  <div class="session", style="margin: 0 auto;">
+    <div id="call-media-contents">
+      <div class="session has-text-centered", style="margin-bottom: 40px;">
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label">My-ID</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <p class="control">
+                <textarea class="input", id="my-id", type="text"></textarea>
+              </p>
+            </div>
+            <div class="field has-addons", style="max-width: 90%;">
+              <p class="control">
+                <button class="button", id="copy-btn">
+                  <span class="icon is-small">
+                    <i class="far fa-copy"></i>
+                  </span>
+                  <span>IDをコピー</span>
+                </button>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label">Partner-ID</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <p class="control">
+                <div class="field is-grouped", style="max-width: 90%;">
+                  <p class="control is-expanded">
+                    <input class="input is-focused", id="their-id" type="text" placeholder="相手のIDを入力">
+                  </p>
+                  <p class="control">
+                    <a class="button is-link　is-rounded", id="make-call">
+                      電話をかける
+                    </a>
+                  </p>
+                </div>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="session", style="text-align: center;">
+        <div class="call-media-partner", style="width: 50%; margin: 0 auto; text-align: center;">
+          <video id="their-video" autoplay muted playsinline, style="background-color: black;"></video>
+        </div>
+        <div class="call-media-myself", style="width: 30%; margin: 0 auto;">
+          <video id="my-video" autoplay muted playsinline></video>
+        </div>
+        <button class="button is-danger is-rounded", id="stop-button", style="margin: 40px;">終話する</button>
+      </div>
+    </div>
+  <div>
+
+  <div class="session has-text-centered" id="before-call-contents">
+    <article class="message is-large">
+      <div class="message-header has-text-centered">
+        <p style="margin: 0 auto;">ビデオ通話に対する注意点　　※必ずお読みください</p>
+      </div>
+      <article class="message is-danger">
+        <div class="message-body">
+          <br>これは<strong>リアルタイムビデオ通話</strong>です。<strong>相手が不快になるような言動</strong>は避けましょう。
+          <br>
+          <br>"開始する"ボタンをクリックするとカメラが起動し、My-IDが発行されます。
+          <br>
+          <br><strong>通話相手があなたのIDを入力すると通話が始まります</strong>のでIDを送信する時はご注意ください。
+          <br>
+          <br><strong>画面の更新をかけるたびにIDは変化します。通話中にページの更新を行うと通話が切断されますのでご注意ください。</strong>
+          <br>
+          <br>あくまで分からない問題を教えあうためのビデオ通話です。
+          <br>その他の目的での利用はお控えください。
+          <br>
+          <br>問題のあるアカウントの場合、利用を停止することもありますのでご注意ください。
+          <br>
+        </div>
+      </article>
+    </article>
+    <button class="button is-rounded is-link", id="before-call", style="margin: 80px;">上記を確認して開始する</button>
+  </div>
+</div>
+
+<script>
+  document.getElementById("call-media-contents").style.display ="none";
+  document.getElementById("before-call").addEventListener("click", function() {
+    alert("カメラがオンになります");
+    alert("IDが発行されます。相手に教えることでビデオ通話ができます");
+    const contents = document.getElementById("call-media-contents");
+    const button = document.getElementById("before-call-contents");
+    if(contents.style.display=="block"){
+      contents.style.display ="none";
+      button.style.display ="block";
+    }else{
+      contents.style.display ="block";
+      button.style.display ="none";
+    }
+
+    let localStream;
+
+    navigator.mediaDevices.getUserMedia({video: true, audio: true})
+      .then( stream => {
+      const videoElm = document.getElementById('my-video')
+      videoElm.srcObject = stream;
+      videoElm.play();
+      localStream = stream;
+    }).catch( error => {
+      console.error('mediaDevice.getUserMedia() error:', error);
+      return;
+    });
+
+    const peer = new Peer({
+      key: gon.api_key,
+      debug: 3
+    });
+    peer.on('open', () => {
+      document.getElementById('my-id').textContent = peer.id;
+    });
+    peer.on('error', err => {
+      alert(err.message);
+    });
+    peer.on('close', () => {
+    alert('通信が切断しました。');
+    });
+
+    document.getElementById('make-call').onclick = () => {
+      const theirID = document.getElementById('their-id').value;
+      const mediaConnection = peer.call(theirID, localStream);
+      setEventListener(mediaConnection);
+    };
+
+    document.getElementById('stop-button').addEventListener("click", function() {
+      location.reload();
+    });
+
+    const setEventListener = mediaConnection => {
+      mediaConnection.on('stream', stream => {
+        const videoElm = document.getElementById('their-video')
+        videoElm.srcObject = stream;
+        videoElm.play();
+      });
+    }
+    peer.on('call', mediaConnection => {
+      mediaConnection.answer(localStream);
+      setEventListener(mediaConnection);
+    });
+  });
+  function txtCopy() {
+    const target = document.getElementById('my-id');
+    if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+      target.readOnly = false;
+      const range = document.createRange();
+      range.selectNode(target);
+      window.getSelection().addRange(range);
+      document.execCommand('copy');
+      target.readOnly = true;
+    } else {
+      target.select();
+      document.execCommand('copy');
+    }
+    alert("My-IDをコピーしました。");
+  }
+  const trg = document.getElementById('copy-btn');
+  trg.addEventListener('click',txtCopy);
+</script>

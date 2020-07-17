@@ -1,15 +1,108 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>QuestionApp</title>
+    <title>Question</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha256-UzFD2WYH2U1dQpKDjjZK72VtPeWP50NoJjd26rnAdUI=" crossorigin="anonymous" />
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js" type="text/javascript"></script>
+    <script src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
+    <%= include_gon %>
   </head>
 
   <body>
-    <%= yield %>
+    <div class="nav", style="background-color: black">
+      <nav class="navbar is-transparent is-black", style="max-width: 680px; margin: 0 auto;">
+        <div class="navbar-brand">
+          <%= link_to root_path, class:"navbar-item" do %>
+            Own Question
+          <% end %>
+        <div class="navbar-burger burger" data-target="navbarExampleTransparentExample">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        </div>
+        <% if user_signed_in? %>
+          <div id="navbarExampleTransparentExample", class="navbar-menu", style="background-color: black">
+            <div class="navbar-end">
+              <div class="navbar-item">
+                <div class="field is-grouped">
+                  <p class="control">
+                    <%= link_to new_tweet_path, class:"button is-black" do %>
+                      <span class="icon">
+                        <i class="fab fa-twitter"></i>
+                      </span>
+                      <span>
+                        質問する
+                      </span>
+                    <% end %>
+                  </p>
+                  <div class="navbar-item has-dropdown is-hoverable is-white">
+                    <%= link_to '#', class:"navbar-link has-text-white" do %>
+                      メニュー
+                    <% end %>
+                    <div class="navbar-dropdown is-right">
+                      <%= link_to tweets_path, class:"navbar-item has-text-link" do %>
+                        質問一覧
+                      <% end %>
+                      <% if unchecked_notifications.any? %>
+                        <i class="fa fa-circle" style="color: gold;"></i>
+                      <% end %>
+                      <%= link_to notifications_path, class:"navbar-item has-text-link" do %>
+                        通知
+                      <% end %>
+                      <hr class="navbar-divider">
+                      <%= link_to user_path(current_user), class:"navbar-item has-text-link" do %>
+                        マイページ
+                      <% end %>
+                      <%= link_to "ログアウト", destroy_user_session_path, method: :delete, class: "navbar-item has-text-link", data: { confirm: 'ログアウトしますか？' } %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% else %>
+          <div id="navbarExampleTransparentExample", class="navbar-menu", style="background-color: black">
+            <div class="navbar-end">
+              <div class="navbar-item">
+                <div class="field is-grouped">
+                  <p class="control">
+                    <%= link_to new_user_session_path, class:"button is-black" do %>
+                      <span>
+                        ログイン
+                      </span>
+                    <% end %>
+                  </p>
+                  <div class="navbar-item has-dropdown is-hoverable is-white">
+                    <%= link_to '#', class:"navbar-link has-text-white" do %>
+                      メニュー
+                    <% end %>
+                    <div class="navbar-dropdown is-right">
+                      <%= link_to tweets_path, class:"navbar-item has-text-link" do %>
+                        ツイート一覧
+                      <% end %>
+                      <%= link_to new_tweet_path, class:"navbar-item has-text-link", id:"devise_alert" do %>
+                        投稿する
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </nav>
+    </div>
+
+    <div class=main>
+      <%= yield %>
+    </div>
   </body>
 </html>

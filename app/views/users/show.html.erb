@@ -1,0 +1,184 @@
+<section class="hero">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title">
+        ユーザーページ
+      </h1>
+      <h2 class="subtitle">
+        質問数：<%= @user.tweets.count %>
+      </h2>
+      <h2 class="subtitle">
+        回答数：<%= @user.comments.count %>
+      </h2>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="columns is-centered">
+          <div class="column is-4">
+              <%= attachment_image_tag @user, :profile_image, fallback: "no_image.png", class: "profile_image" %>
+          </div>
+          <div class="column is-8">
+            <table class="table is-fullwidth">
+              <tr>
+                <td class="is-size-4">
+                  <strong><%= @user.username %></strong>
+                </td>
+                <% if @user.id == current_user.id %>
+                  <td class="is-size-4">
+                    <%= @user.email %>
+                  </td>
+                  <td>
+                      <%= link_to "編集", edit_user_path(@user), class: "button is-link" %>
+                  </td>
+                <% else %>
+                  <td>
+                      <% if @isRoom == true %>
+                        <%= link_to "DMを送る", "/rooms/#{@roomId}", class: "button is-link" %>
+                      <% else %>
+                        <%= form_for @room do |f| %>
+                          <%= fields_for @entry do |e| %>
+                            <%= e.hidden_field :user_id, :value=> @user.id %>
+                          <% end %>
+                          <%= f.button "DMを開始する", class: "button is-link"%>
+                        <% end %>
+                      <% end %>
+                  </td>
+                <% end %>
+              </tr>
+            </table>
+            <hr>
+            <table class="table is-fullwidth">
+              <tr>
+                <td>
+                  <%= @user.profile %>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="column has-background-light">
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title"">
+          質問一覧
+        </h1>
+      </div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container">
+      <div class="columns is-multiline">
+        <% if @user.tweets.present? %>
+          <% @user.tweets.each do |tweet| %>
+            <div class="column is-4">
+              <div class="card">
+                <div class="card-image">
+                  <figure class="image is-4by3">
+                    <%= link_to tweet_path(tweet) do %>
+                      <%= attachment_image_tag tweet, :image, fallback: "no_image.png" %>
+                    <% end %>
+                  </figure>
+                </div>
+                <div class="media-content">
+                  <p class="title is-4", style="text-align: center;">
+                    <%= link_to tweet_path(tweet) do %>
+                      <%= tweet.title.truncate(10, separator: '.') %>
+                    <% end %>
+                  </p>
+                </div>
+                <div class="card-content">
+                  <div class="media">
+                    <div class="media-content">
+                      <%= link_to tweet_path(tweet), class: "panel-block" do %>
+                        <span class="panel-icon">
+                          <i class="fas fa-book" aria-hidden="true"></i>
+                        </span>
+                        質問を見る
+                      <% end %>
+                      <% if @user.id == current_user.id %>
+                        <%= link_to edit_tweet_path(tweet), class: "panel-block" do %>
+                          <span class="panel-icon">
+                            <i class="fas fa-edit"></i>
+                          </span>
+                          質問を編集する
+                        <% end %>
+                      <% end %>
+                    </div>
+                  </div>
+                  <div class="content">
+                    <time><%= tweet.updated_at.strftime("%Y-%m-%d %H:%M") %></time>更新
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="non-tweet">
+            <h1 class="subtitle1">まだ質問がありません</h1>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+</div>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title"">
+        このユーザーの回答一覧
+      </h1>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <% if @comments.present? %>
+      <% @comments.each do |comment| %>
+        <article class="media">
+          <figure class="media-left">
+            <p class="image is-64x64">
+              <%= link_to user_path(comment.tweet.user_id) do %>
+                <%= attachment_image_tag comment.tweet.user, :profile_image, fallback: "no_image.png" %>
+              <% end %>
+            </p>
+          </figure>
+          <div class="media-content">
+            <div class="content">
+              <p>
+                <strong><%= link_to comment.tweet.user.username, user_path(comment.tweet.user_id) %>さんの質問に回答しました</strong>
+                <br>
+                質問：<%= link_to comment.tweet.title,  tweet_path(comment.tweet_id) %>
+              </p>
+            </div>
+            <% if comment.image.present? %>
+              <div class="content">
+                画像で回答を送信しました
+              </div>
+            <% else %>
+              <div class="content">
+                <%= comment.text %>
+              </div>
+            <% end %>
+          </div>
+        </article>
+      <% end %>
+      <hr>
+    <% else %>
+      <h1 class="subtitle1">まだ回答がありません</h1>
+    <% end %>
+  </div>
+  <%= paginate @comments %>
+</section>

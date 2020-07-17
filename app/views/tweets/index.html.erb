@@ -1,0 +1,47 @@
+<section class="hero">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title">
+        質問一覧
+      </h1>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="columns is-multiline">
+      <% @tweets.each do |tweet| %>
+        <div class="column is-4">
+          <div class="card">
+            <div class="card-image">
+              <figure class="image is-4by3">
+                <%= link_to tweet_path(tweet) do %>
+                  <%= attachment_image_tag tweet, :image %>
+                <% end %>
+              </figure>
+            </div>
+            <div class="card-content">
+              <div class="media">
+                <div class="media-left">
+                  <figure class="image is-48x48">
+                    <%= link_to user_path(tweet.user_id) do %>
+                      <%= attachment_image_tag tweet.user, :profile_image, fallback: "no_image.png", class: "profile_image" %>
+                    <% end %>
+                  </figure>
+                </div>
+                <div class="media-content">
+                  <div class="title"><%=link_to tweet.title.truncate(8, separator: '.'), tweet_path(tweet) %></div>
+                </div>
+              </div>
+              <div class="content">
+                <time><%= tweet.updated_at.strftime("%Y-%m-%d %H:%M") %></time>更新
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <%= paginate(@tweets) %>
+  </div>
+</section>

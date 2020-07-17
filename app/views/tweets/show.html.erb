@@ -1,0 +1,137 @@
+<section class="hero">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title">
+        <%= @tweet.title%>
+      </h1>
+      <h2 class="subtitle">
+        回答数：<%= @tweet.comments.count %>
+      </h2>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-7">
+        <div class="card">
+          <div class="card-image">
+            <figure class="image is-4by3">
+              <%= link_to Refile.attachment_url(@tweet, :image), "data-lightbox"=>"a" do %>
+                  <%= attachment_image_tag @tweet, :image, fallback: "no_image.png" %> 
+              <% end %>
+            </figure>
+          </div>
+          <div class="card-content">
+            <div class="media">
+              <div class="media-content">
+                <p class="title is-4"><%= @tweet.title %></p>
+              </div>
+            </div>
+            <div class="content">
+              <table class="table is-narrow">
+                <tr>
+                  <th>本文</th>
+                </tr>
+                <tr>
+                  <td><%= simple_format @tweet.body %></td>
+                </tr>
+              </table>
+              <% if @tweet.user.id == current_user.id %>
+                <%= link_to "編集画面へ", edit_tweet_path(@tweet), class: "button is-link" %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="column is-4">
+        <article class="panel is-link">
+          <%= link_to user_path(@tweet.user), class: "panel-block" do %>
+            <%= attachment_image_tag @tweet.user, :profile_image, fallback: "no_image.png", class: "profile_image" %>
+          <% end %>
+          <p class="panel-heading">
+            質問者： <%= link_to @tweet.user.username, user_path(@tweet.user), class:"has-text-white"%>
+          </p>
+          <div class="panel-block">
+            <p class="control">
+              自己紹介：<%= @tweet.user.profile %>
+            </p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="column has-background-light">
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title"">
+          この質問の回答
+        </h1>
+      </div>
+    </div>
+  </section>
+  <div class="column is-7">
+    <% if @comments.present? %>
+      <% @comments.each do |comment| %>
+        <div class="card">
+          <hr>
+            <% if comment.image.present? %>
+              <div class="card-image">
+                <figure class="image is-4by3">
+                  <%= link_to Refile.attachment_url(comment, :image), "data-lightbox"=>"ab" do %>
+                    <%= attachment_image_tag comment, :image %>
+                  <% end %>
+                </figure>
+              </div>
+            <% else %>
+            <% end %>
+          <div class="card-content", style="margin-button">
+            <div class="content">
+              <table class="table is-narrow">
+                <tr>
+                  <th>回答：<%= link_to comment.user.username, "/users/#{comment.user_id}" %>さん</th>
+                </tr>
+                <tr>
+                  <td><%= simple_format comment.text %></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <h1 class="subtitle1">まだ回答がありません</h1>
+    <% end %>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title"">
+        あなたの回答を送信する
+      </h1>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <%= form_with(model: [@tweet, @comment], local: true) do |f| %>
+      <div class="field">
+        <%= f.label :text, "本文", class: "label" %>
+        <%= f.text_area :text, class: "textarea" %>
+      </div>
+      <div class="field">
+        <%= f.label :image, "写真", class: "label" %>
+        <%= f.attachment_field :image, class: "input" %>
+      </div>
+      <%= f.submit '回答する', class: "button is-link" %>
+    <% end %>
+  </div>
+</section>

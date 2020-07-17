@@ -1,0 +1,132 @@
+<section class="section">
+  <article class="media">
+    <div class="media-content">
+      <div class="content has-text-centered">
+        <p>
+          <strong class="is-size-1">問題を教え合おう</strong>
+        </p>
+      </div>
+      <% if user_signed_in? %>
+      <% else %>
+        <div class="columns is-centered">
+          <div class="column is-5">
+            <%= link_to "はじめる", new_user_registration_path, class: "button is-black is-fullwidth" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </article>
+  <br>
+  <div class="columns is-centered">
+    <div class="column">
+      <figure>
+        <div class="main-image"></div>
+      </figure>
+    </div>
+  </div>
+  <p>Own Questionはさまざまな問題について教え合いをする投稿型の質疑応答アプリです。<br>分からない問題を自分の言葉で伝え、わかる問題を自分の言葉で教えることで学習理解が深まります。<br>また、ビデオ通話機能を使い、リアルタイムで教えることも可能です。<br>つまづいたところはそのままにせず、理解ができるまで質問してください。</p>
+</section>
+
+<div class="session has-background-light">
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">
+          最新の質問
+        </h1>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="columns is-multiline">
+        <% @tweets.each do |tweet| %>
+          <div class="column is-4">
+            <div class="card">
+              <div class="card-image">
+                <figure class="image is-4by3">
+                  <%= link_to tweet_path(tweet) do %>
+                    <%= attachment_image_tag tweet, :image %>
+                  <% end %>
+                </figure>
+              </div>
+              <div class="card-content">
+                <div class="media">
+                  <div class="media-left">
+                    <figure class="image is-48x48">
+                      <%= link_to user_path(tweet.user_id) do %>
+                        <%= attachment_image_tag tweet.user, :profile_image, fallback: "no_image.png", class: "profile_image" %>
+                      <% end %>
+                    </figure>
+                  </div>
+                  <div class="media-content">
+                    <div class="title"><%=link_to tweet.title.truncate(8, separator: '.'), tweet_path(tweet) %></div>
+                  </div>
+                </div>
+                <div class="content">
+                  <time><%= tweet.updated_at.strftime("%Y-%m-%d %H:%M") %></time>更新
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <%= paginate(@tweets) %>
+    </div>
+  </section>
+</div>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title">
+        最新の回答
+      </h1>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <% @comments.each do |comment| %>
+      <article class="media">
+        <figure class="media-left">
+          <p class="image is-64x64">
+            <%= link_to user_path(comment.user_id) do %>
+              <%= attachment_image_tag comment.user, :profile_image, fallback: "no_image.png" %>
+            <% end %>
+          </p>
+        </figure>
+        <div class="media-content">
+          <div class="content">
+            <p>
+              <strong><%= link_to comment.user.username, user_path(comment.tweet.user_id) %>さんが回答</strong>
+              <br>
+              質問：<%= link_to comment.tweet.title,  tweet_path(comment.tweet_id) %>
+            </p>
+          </div>
+          <% if comment.image.present? %>
+            <div class="content">
+              画像が送信されました
+            </div>
+          <% else %>
+            <div class="content">
+              <%= comment.text %>
+            </div>
+          <% end %>
+        </div>
+      </article>
+    <% end %>
+    <hr>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="content has-text-centered">
+    <p>
+      このサイトは <a href="https://twitter.com/S8dWKVjL5KpKTCW">@mummy_Ryohei</a>が作成しました。<br>
+      ご意見、ご要望のある方は<a href="mailto:f.75.ryohei.mamiduka@gmail.com">こちら</a>までご連絡ください。
+    </p>
+  </div>
+</footer>
