@@ -1,24 +1,16 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+# Own-Question
 
-Things you may want to cover:
+投稿型Q＆Aサイト
+リアルタイムのビデオ通話も実装
 
-* Ruby version
 
-* System dependencies
+# Usage
 
-* Configuration
+```
+https://myquestionapp.herokuapp.com/
+```
 
-* Database creation
 
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+ 
