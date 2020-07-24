@@ -76,7 +76,6 @@ gem 'devise-i18n-views'
 
 gem "refile-s3"
 
-
 group :production do
   gem 'pg'
 end
