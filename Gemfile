@@ -74,10 +74,9 @@ gem 'kaminari'
 gem 'devise-i18n'
 gem 'devise-i18n-views'
 
-gem 'aws-sdk-s3', require: false
+gem "refile-s3"
 
 
 group :production do
   gem 'pg'
-  gem 'fog-aws'
 end
