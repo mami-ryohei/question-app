@@ -308,6 +308,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  aws-sdk (~> 2)
   bootsnap (>= 1.1.0)
   bulma-rails
   byebug
