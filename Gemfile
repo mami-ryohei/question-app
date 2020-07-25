@@ -75,6 +75,7 @@ gem 'devise-i18n'
 gem 'devise-i18n-views'
 
 gem "refile-s3"
+gem 'fog-aws'
 
 group :production do
   gem 'pg'
